@@ -11,11 +11,11 @@ namespace api_ingreso.src.Service
 
             string version = "";
 
-            Console.WriteLine(DB.CadenaConexion());
+            Console.WriteLine(DB.Conexion());
 
 
             // Utiliza el bloque using para asegurarte de que la conexión se cierre adecuadamente
-            using (SqlConnection conn = new SqlConnection(DB.CadenaConexion()))
+            using (SqlConnection conn = new SqlConnection(DB.Conexion()))
             {
                 conn.Open();
 
