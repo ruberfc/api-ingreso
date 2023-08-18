@@ -1,4 +1,5 @@
 using api_ingreso.src.Tools;
+using api_ingreso.src.Router;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,13 +18,18 @@ builder.Services.AddCors(options =>
     });
 });
 
+
 var app = builder.Build();
+
+
+RouterComputadora.MapRouterComputadora(app);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseDeveloperExceptionPage();
 }
 
 app.UseHttpsRedirection();
