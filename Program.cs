@@ -1,16 +1,29 @@
 using api_ingreso.src.Tools;
 using api_ingreso.src.Router;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Mi API de Ingreso", Version = "v1" });
+});
 builder.Services.AddControllers();
+//builder.Services.AddCors(options =>
+//{
+//    options.AddDefaultPolicy(builder =>
+//    {
+//        builder.AllowAnyOrigin()
+//               .AllowAnyMethod()
+//               .AllowAnyHeader();
+//    });
+//});
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(builder =>
+    options.AddPolicy("AllowAll", builder =>
     {
         builder.AllowAnyOrigin()
                .AllowAnyMethod()
@@ -21,92 +34,35 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-
 RouterComputadora.MapRouterComputadora(app);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Mi API de Ingreso V1"));
     app.UseDeveloperExceptionPage();
 }
 
 app.UseHttpsRedirection();
-app.UseCors();
+app.UseCors("AllowAll");
 app.MapControllers();
 
 app.MapGet("/", () =>
 {
-    ResponseCustom response = new(){Code = 200, Mensaje = "Api - Ingreso"};
+    ResponseCustom response = new()
+    {
+        Code = 200,
+        Mensaje = "Api - Ingreso",
+        Obj = new
+        {
+            Vercion = "1.0",
+            Autor = "Ruber Flores de la Cruz",
+            Publicaion = 2023
+        }
+    };
+
     return response;
 });
 
 app.Run();
-
-
-
-
-
-
-
-
-
-
-
-
-//app.MapGet("/Locales", () => {
-//    return LocalService.GetAllLocal();
-//});
-
-/*
-app.MapGet("/Local/{localId}", (int localId) =>
-{
-    try
-    {
-        var Response = new
-        {
-            StatusCode = 200,
-            Message = "Ok",
-            Details = LocalService.GetLocalById(localId)
-        };
-
-        return Results.Json(Response);
-
-    }
-    catch (Exception ex)
-    {
-        var errorResponse = new
-        {
-            StatusCode = 500,
-            Message = "Ocurrió un error en el servidor",
-            ErrorDetails = ex.Message
-        };
-
-        return Results.Json(errorResponse);
-
-    }
-
-});
-*/
-
-
-
-
-/*
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
-*/
-
